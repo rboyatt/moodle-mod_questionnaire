@@ -643,7 +643,8 @@ function questionnaire_get_incomplete_users($cm, $sid,
                 $group = false,
                 $sort = '',
                 $startpage = false,
-                $pagecount = false) {
+                $pagecount = false,
+                $inactive = false) {
 
     global $DB;
 
@@ -652,16 +653,23 @@ function questionnaire_get_incomplete_users($cm, $sid,
     // First get all users who can complete this questionnaire.
     $cap = 'mod/questionnaire:submit';
     $fields = 'u.id, u.username';
-    if (!$allusers = get_users_by_capability($context,
-                    $cap,
-                    $fields,
-                    $sort,
-                    '',
-                    '',
-                    $group,
-                    '',
-                    true)) {
-        return false;
+    // Are we displaying all users or just active users?
+    if ($inactive) {
+        if (!$allusers = get_users_by_capability($context,
+          $cap,
+          $fields,
+          $sort,
+          '',
+          '',
+          $group,
+          '',
+          true)) {
+            return false;
+        }
+    } else {
+        if (!$allusers = get_enrolled_users($context, $cap, $group, $fields, $sort)) {
+            return false;
+        }
     }
     $allusers = array_keys($allusers);
 
