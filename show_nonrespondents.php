@@ -41,6 +41,7 @@ $showall = optional_param('showall', false, PARAM_INT);  // Should we show all u
 $sid    = optional_param('sid', 0, PARAM_INT);
 $qid    = optional_param('qid', 0, PARAM_INT);
 $currentgroupid = optional_param('group', 0, PARAM_INT); // Groupid.
+$onlyactive = optional_param('onlyactive', 1, PARAM_INT); // Active or all users
 
 if (!isset($SESSION->questionnaire)) {
     $SESSION->questionnaire = new stdClass();
@@ -96,7 +97,7 @@ require_capability('mod/questionnaire:viewsingleresponse', $context);
 
 // Anonymous questionnaire.
 if (!$fullname) {
-    $nonrespondents = questionnaire_get_incomplete_users($cm, $sid);
+    $nonrespondents = questionnaire_get_incomplete_users($cm, $sid, false, '', false, false, $onlyactive);
     $countnonrespondents = count($nonrespondents);
     if ($resume) {
         $countstarted = 0;
@@ -270,7 +271,7 @@ if ($fullname) {
     } else {
         $usedgroupid = false;
     }
-    $nonrespondents = questionnaire_get_incomplete_users($cm, $sid, $usedgroupid);
+    $nonrespondents = questionnaire_get_incomplete_users($cm, $sid, $usedgroupid, '', false, false, $onlyactive);
     $countnonrespondents = count($nonrespondents);
 
     $table->initialbars(false);
@@ -285,7 +286,7 @@ if ($fullname) {
     }
 }
 
-$nonrespondents = questionnaire_get_incomplete_users($cm, $sid, $usedgroupid, $sort, $startpage, $pagecount);
+$nonrespondents = questionnaire_get_incomplete_users($cm, $sid, $usedgroupid, $sort, $startpage, $pagecount, $onlyactive);
 
 // Viewreports-start.
 // Print the list of students.
